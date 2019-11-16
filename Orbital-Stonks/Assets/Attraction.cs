@@ -23,11 +23,19 @@ public class Attraction : MonoBehaviour
         Rigidbody2D rb;
 
         Vector3 force;
-        print(hitColliders.Length);
         while (i < hitColliders.Length)
         {
-   
+            if (hitColliders[i].gameObject.tag == "Player")
+            {
+                i++;
+                continue;
+            }
             rb = hitColliders[i].GetComponent<Rigidbody2D>();
+            if(rb.velocity.magnitude <= 0.0f)
+            {
+                i++;
+                continue;
+            }
             force = transform.position - hitColliders[i].transform.position;
             float dist = force.magnitude;
             if(dist != 0) {
@@ -35,7 +43,6 @@ public class Attraction : MonoBehaviour
                 Vector3 gravityVector = transform.localScale.x * transform.localScale.x * (gravityDirection * gravity) / (dist * dist);
 
                 rb.AddForce(gravityVector, ForceMode2D.Force);
-                print(gravityVector.magnitude);
                 hitColliders[i].transform.right = rb.velocity.normalized;
             }
             i++;
