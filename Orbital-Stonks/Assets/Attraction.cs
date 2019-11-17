@@ -38,7 +38,7 @@ public class Attraction : MonoBehaviour
             }
             force = transform.position - hitColliders[i].transform.position;
             float dist = force.magnitude;
-            if(dist != 0) {
+            if (dist != 0) {
                 Vector3 gravityDirection = force.normalized;
                 Vector3 gravityVector = transform.localScale.x * transform.localScale.x * (gravityDirection * gravity) / (dist * dist);
 

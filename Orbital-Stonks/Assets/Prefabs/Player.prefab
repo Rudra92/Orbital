@@ -141,7 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09249cce94a5c92499479d9d1ba20b5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 0
+  hp: 1
   aimCirclePrefab: {fileID: 8433538500490217601, guid: 4a568d02822a5594a900a869e4a2b421,
     type: 3}
   projectilePrefab: {fileID: 7842678277924499814, guid: 2675b045c3b9ad2479349ab21d41bc82,

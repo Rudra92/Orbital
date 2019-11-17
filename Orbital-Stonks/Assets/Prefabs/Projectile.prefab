@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7842678277924499740}
   m_Layer: 0
   m_Name: Projectile
-  m_TagString: Untagged
+  m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 7842678277924499814}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 21.2, y: -5.8, z: 0}
-  m_LocalScale: {x: 0.976, y: 0.323, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -72,8 +72,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 54e9df7ed9d41824c848096591cd277f, type: 3}
-  m_Color: {r: 0.990566, g: 0.13333334, b: 0.07008721, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 7ba4f39046f03d942acf7c2691d72cbc, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -100,7 +100,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 3.69, y: 1.77}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -157,3 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d44e652340cb8345b33163a85798335, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionRange: 1
+  explosionPrefab: {fileID: 5137300360124499166, guid: 29b21b7c3967926418768db5a88d474b,
+    type: 3}
+  isExplosive: 0
