@@ -50,7 +50,7 @@ public class PlayerBehaviour : MonoBehaviour
         this.firing = false;
         this.myTurn = false;
         shootingAngle = 0f;
-        powerUp = PowerUp.Jump;
+        powerUp = PowerUp.Normal;
         gc = GameObject.FindGameObjectWithTag("GameController");
         run = gc.GetComponent<Run>();
         this.spriteHolder = GameObject.FindGameObjectWithTag("PowerUpHolder");
