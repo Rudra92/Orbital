@@ -22,7 +22,7 @@ public class ProjectileController : MonoBehaviour
     {
         if(collision.tag == "Player")
         {
-            Destroy(collision.gameObject);
+            collision.gameObject.SetActive(false);
             Destroy(gameObject);
             return;
         }
