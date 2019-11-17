@@ -6,6 +6,9 @@ public class PlayerBehaviour : MonoBehaviour
 {
     private const string PLANET_TAG = "Planet";
     private const float MINIMAL_VELOCITY = 0.01f;
+    private const float INITIAL_SHOOTING_POWER = 5;
+    private const float MINIMAL_SHOOTING_POWER = 2;
+    private const float MAXIMAL_SHOOTING_POWER = 10;
 
     public int hp;
     private BoxCollider2D bc2d;
@@ -15,6 +18,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private bool firing;
     private float shootingAngle;
+    private float shootingPower;
     public GameObject aimCirclePrefab;
     public GameObject projectilePrefab;
     private GameObject aimCircle;
@@ -60,10 +64,7 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 if (Input.GetKeyDown("f"))
                 {
-                    print("KEY DOWN");
-                    firing = true;
-                    shootingAngle = 0f;
-                    aimCircle = Instantiate(aimCirclePrefab);
+                    SetupShoot();
                     PrepareShooting();
                 }
                 else
@@ -104,15 +105,26 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
+    private void SetupShoot()
+    {
+        firing = true;
+        shootingAngle = 0f;
+        shootingPower = INITIAL_SHOOTING_POWER;
+        aimCircle = Instantiate(aimCirclePrefab);
+    }
+
     private void PrepareShooting()
     {
         print(aimCircle.transform.position);
         shootingAngle += 0.1f * Input.GetAxis("Horizontal");
         shootingAngle = Mathf.Clamp(shootingAngle, -Mathf.PI / 2, Mathf.PI / 2);
 
+        shootingPower += 0.1f * Input.GetAxis("Vertical");
+        shootingPower = Mathf.Clamp(shootingPower, MINIMAL_SHOOTING_POWER, MAXIMAL_SHOOTING_POWER);
+
         Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
         float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x) - shootingAngle;
-        float distance = 2 * transform.localScale.x;
+        float distance = 1.2f * transform.localScale.x * shootingPower;
 
         aimCircle.transform.position = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
     }
@@ -129,6 +141,6 @@ public class PlayerBehaviour : MonoBehaviour
         Vector3 projectilePosition = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
 
         GameObject projectile = Instantiate(projectilePrefab, projectilePosition, Quaternion.identity);
-        projectile.GetComponent<Rigidbody2D>().velocity = 5 * (projectilePosition - transform.position);
+        projectile.GetComponent<Rigidbody2D>().velocity = shootingPower * (projectilePosition - transform.position);
     }
 }
