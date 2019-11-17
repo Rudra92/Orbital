@@ -23,6 +23,9 @@ public class PlayerBehaviour : MonoBehaviour
     public GameObject projectilePrefab;
     private GameObject aimCircle;
     private PowerUp powerUp;
+    private bool myTurn;
+    private GameObject gc;
+    private Run run;
 
     enum PowerUp
     {
@@ -40,13 +43,24 @@ public class PlayerBehaviour : MonoBehaviour
         this.planets = GameObject.FindGameObjectsWithTag(PLANET_TAG);
         this.currentPlanet = null;
         this.firing = false;
+        this.myTurn = false;
         shootingAngle = 0f;
         powerUp = PowerUp.Normal;
+        gc = GameObject.FindGameObjectWithTag("GameController");
+        run = gc.GetComponent<Run>();
+
     }
+
+
 
     // Update is called once per frame
     void Update()
     {
+        if (rb2d.velocity.magnitude <= MINIMAL_VELOCITY)
+        {
+            rb2d.velocity = new Vector2(0, 0);
+        }
+
         if (currentPlanet == null)
         {
             // let it gravitate into a planet
@@ -62,9 +76,10 @@ public class PlayerBehaviour : MonoBehaviour
             }
         } else
         {
+
             if (firing)
             {
-                if (Input.GetKeyDown("space"))
+                if (Input.GetKeyDown("space") && myTurn)
                 {
                     Shoot();
                 }
@@ -72,7 +87,7 @@ public class PlayerBehaviour : MonoBehaviour
             }
             else
             {
-                if (Input.GetKeyDown("f"))
+                if (Input.GetKeyDown("f") && myTurn)
                 {
                     SetupShoot();
                     PrepareShooting();
@@ -83,7 +98,8 @@ public class PlayerBehaviour : MonoBehaviour
                     Vector3 planetToPlayer = transform.position - planetPosition;
 
                     float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x);
-                    float horiInput = 0.1f * Input.GetAxis("Horizontal") / currentPlanet.transform.localScale.x;
+                    // only modify position with inputs if it is this player turn
+                    float horiInput = myTurn ? 0.1f * Input.GetAxis("Horizontal") / currentPlanet.transform.localScale.x : 0;
                     float distance = currentPlanet.transform.localScale.x / 2 + transform.localScale.y / 2;
 
                     transform.position = planetPosition + new Vector3(distance * Mathf.Cos(angle - horiInput), distance * Mathf.Sin(angle - horiInput), transform.position.z);
@@ -91,10 +107,7 @@ public class PlayerBehaviour : MonoBehaviour
                 }
             }
 
-            if (rb2d.velocity.magnitude <= MINIMAL_VELOCITY)
-            {
-                rb2d.velocity = new Vector2(0, 0);
-            }
+            
         }
     }
 
@@ -110,7 +123,6 @@ public class PlayerBehaviour : MonoBehaviour
             Vector3 playerToPlanet = planetPosition - transform.position;
             float distance = playerToPlanet.magnitude + 1e-10f;
 
-            Debug.Log(distance);
             rb2d.AddForce(transform.localScale.x * transform.localScale.x * planet.GetComponent<Attraction>().gravity * playerToPlanet.normalized / (distance * distance / 10));
         }
     }
@@ -125,7 +137,6 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void PrepareShooting()
     {
-        print(aimCircle.transform.position);
         shootingAngle += 0.1f * Input.GetAxis("Horizontal");
         shootingAngle = Mathf.Clamp(shootingAngle, -Mathf.PI / 2, Mathf.PI / 2);
 
@@ -142,6 +153,7 @@ public class PlayerBehaviour : MonoBehaviour
     private void Shoot()
     {
         firing = false;
+        myTurn = false;
         GameObject.Destroy(aimCircle);
 
         switch(powerUp)
@@ -192,7 +204,27 @@ public class PlayerBehaviour : MonoBehaviour
             default: break;
         }
 
+   
+    }
+    public void StartTurn()
+    {
+        myTurn = true;
+    }
+
+    void EndTurn()
+    {
+        myTurn = false;
+    }
+
+    public bool IsTurn()
+    {
+        return myTurn;
+    }
 
 
+    private void OnDisable()
+    {
+        run.DisableTurning();
+        myTurn = false;
     }
 }

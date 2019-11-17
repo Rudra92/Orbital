@@ -10,13 +10,18 @@ public class MenuButtons : MonoBehaviour
     public Slider slider;
     public Text playerNumber;
 
+    private int nbPlayers;
+
     // Start is called before the first frame update
     void Start()
     {
         playerNumber.text = "2";
         MainPanel.SetActive(true);
         SettingsPanel.SetActive(false);
-        slider.onValueChanged.AddListener(delegate { setPlayerNumber(); });
+        slider.onValueChanged.AddListener(delegate {
+            print(slider.value);
+            nbPlayers = (int)slider.value;
+            setPlayerNumber(); });
     }
 
     // Update is called once per frame
@@ -41,4 +46,13 @@ public class MenuButtons : MonoBehaviour
     {
         playerNumber.text = slider.value.ToString();
     }
-}
+
+    public int GetPlayersNum()
+    {
+        return nbPlayers;
+    }
+
+   
+
+    
+ }
