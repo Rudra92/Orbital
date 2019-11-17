@@ -9,6 +9,7 @@ public class PlayerBehaviour : MonoBehaviour
     private const float INITIAL_SHOOTING_POWER = 5;
     private const float MINIMAL_SHOOTING_POWER = 2;
     private const float MAXIMAL_SHOOTING_POWER = 10;
+    private const float MAX_ANGLE = Mathf.PI / 2;
 
     public int hp;
     private BoxCollider2D bc2d;
@@ -26,6 +27,10 @@ public class PlayerBehaviour : MonoBehaviour
     private bool myTurn;
     private GameObject gc;
     private Run run;
+
+    private GameObject spriteHolder;
+
+    public Sprite[] powerUpSprites;
 
     enum PowerUp
     {
@@ -45,10 +50,10 @@ public class PlayerBehaviour : MonoBehaviour
         this.firing = false;
         this.myTurn = false;
         shootingAngle = 0f;
-        powerUp = PowerUp.Normal;
+        powerUp = PowerUp.Jump;
         gc = GameObject.FindGameObjectWithTag("GameController");
         run = gc.GetComponent<Run>();
-
+        this.spriteHolder = GameObject.FindGameObjectWithTag("PowerUpHolder");
     }
 
 
@@ -76,38 +81,42 @@ public class PlayerBehaviour : MonoBehaviour
             }
         } else
         {
+            
+            Vector3 planetPosition = currentPlanet.transform.position;
+            Vector3 planetToPlayer = transform.position - planetPosition;
+            float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x);
+            float horiInput = firing || !myTurn ? 0 : 0.1f * Input.GetAxis("Horizontal") / currentPlanet.GetComponent<CircleCollider2D>().bounds.size.x / 2;
+            float distance = currentPlanet.GetComponent<CircleCollider2D>().bounds.size.x / 2 + bc2d.bounds.size.y / 2;
 
-            if (firing)
+            transform.position = planetPosition + new Vector3(distance * Mathf.Cos(angle - horiInput), distance * Mathf.Sin(angle - horiInput), transform.position.z);
+            rb2d.velocity *= 0.9f;
+        }
+        
+        if (myTurn && currentPlanet != null) {
+
+            if (firing && Input.GetKeyDown("space")) {
+                Shoot();
+            } else if (powerUp == PowerUp.Jump && Input.GetKeyDown("space")) {
+                Vector3 planetPosition = currentPlanet.transform.position;
+                Vector3 planetToPlayer = transform.position - planetPosition;
+                Vector3 jumpVector = 15 * planetToPlayer.normalized;
+                rb2d.velocity += new Vector2(jumpVector.x, jumpVector.y);
+                transform.position += 0.1f * new Vector3(rb2d.velocity.x, rb2d.velocity.y, 0);
+                currentPlanet = null;
+                powerUp = PowerUp.Normal;
+            } else if (firing)
             {
-                if (Input.GetKeyDown("space") && myTurn)
-                {
-                    Shoot();
-                }
                 PrepareShooting();
             }
-            else
+            else if (Input.GetKeyDown("f") && myTurn)
             {
-                if (Input.GetKeyDown("f") && myTurn)
-                {
-                    SetupShoot();
-                    PrepareShooting();
-                }
-                else
-                {
-                    Vector3 planetPosition = currentPlanet.transform.position;
-                    Vector3 planetToPlayer = transform.position - planetPosition;
-
-                    float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x);
-                    // only modify position with inputs if it is this player turn
-                    float horiInput = myTurn ? 0.1f * Input.GetAxis("Horizontal") / currentPlanet.transform.localScale.x : 0;
-                    float distance = currentPlanet.transform.localScale.x / 2 + transform.localScale.y / 2;
-
-                    transform.position = planetPosition + new Vector3(distance * Mathf.Cos(angle - horiInput), distance * Mathf.Sin(angle - horiInput), transform.position.z);
-                    rb2d.velocity *= 0.9f;
-                }
+                SetupShoot();
+                PrepareShooting();
             }
+        }
 
-            
+        if (myTurn) {
+            spriteHolder.GetComponent<SpriteRenderer>().sprite = powerUpSprites[(int) powerUp];
         }
     }
 
@@ -123,7 +132,8 @@ public class PlayerBehaviour : MonoBehaviour
             Vector3 playerToPlanet = planetPosition - transform.position;
             float distance = playerToPlanet.magnitude + 1e-10f;
 
-            rb2d.AddForce(transform.localScale.x * transform.localScale.x * planet.GetComponent<Attraction>().gravity * playerToPlanet.normalized / (distance * distance / 10));
+            float gravityPower = planet.GetComponent<Attraction>().gravity * Mathf.Pow(planet.GetComponent<CircleCollider2D>().bounds.size.x / 2, 2) / Mathf.Pow(distance, 2);
+            rb2d.AddForce(gravityPower * playerToPlanet.normalized);
         }
     }
 
@@ -137,17 +147,40 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void PrepareShooting()
     {
-        shootingAngle += 0.1f * Input.GetAxis("Horizontal");
-        shootingAngle = Mathf.Clamp(shootingAngle, -Mathf.PI / 2, Mathf.PI / 2);
+        shootingAngle += 0.01f * Input.GetAxis("Horizontal");
+        shootingAngle = Mathf.Clamp(shootingAngle, -MAX_ANGLE, MAX_ANGLE);
 
         shootingPower += 0.1f * Input.GetAxis("Vertical");
         shootingPower = Mathf.Clamp(shootingPower, MINIMAL_SHOOTING_POWER, MAXIMAL_SHOOTING_POWER);
 
         Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
         float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x) - shootingAngle;
-        float distance = 1.2f * transform.localScale.x * shootingPower;
+        float distance = 1.1f * bc2d.bounds.size.y / 2 * shootingPower;
 
         aimCircle.transform.position = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
+
+        switch(powerUp) {
+            case PowerUp.Normal:
+            {
+                aimCircle.gameObject.GetComponent<SpriteRenderer>().material.color = new Color(0,255f,0,1f);
+                break;
+            }
+            case PowerUp.Jump:
+            {
+                aimCircle.gameObject.GetComponent<SpriteRenderer>().material.color = new Color(0,0,255f,1f);
+                break;
+            }
+            case PowerUp.Explode:
+            {
+                aimCircle.gameObject.GetComponent<SpriteRenderer>().material.color = new Color(255f,0,0,1f);
+                break;
+            }
+            case PowerUp.Widespray:
+            {
+                aimCircle.gameObject.GetComponent<SpriteRenderer>().material.color = new Color(255f,255f,0,1f);
+                break;
+            }
+        }
     }
 
     private void Shoot()
@@ -156,47 +189,51 @@ public class PlayerBehaviour : MonoBehaviour
         myTurn = false;
         GameObject.Destroy(aimCircle);
 
+        Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
+        float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x) - shootingAngle;
+        float distance = bc2d.bounds.size.y + projectilePrefab.GetComponent<Collider2D>().bounds.size.y + 1;
+
         switch(powerUp)
         {
             case PowerUp.Jump:
             case PowerUp.Normal:
                 { 
-                Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
-                float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x) - shootingAngle;
-                float distance = 2 * transform.localScale.x;
-
                 Vector3 projectilePosition = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
 
                 GameObject projectile = Instantiate(projectilePrefab, projectilePosition, Quaternion.identity);
                 projectile.GetComponent<Rigidbody2D>().velocity = shootingPower * (projectilePosition - transform.position);
+                projectile.GetComponent<ProjectileController>().SetCreator(gameObject);
                 break;
                 }
 
             case PowerUp.Explode:
                 {
-                    //todo: Implement exploding arrow
-                    Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
-                    float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x) - shootingAngle;
-                    float distance = 2 * transform.localScale.x;
-
                     Vector3 projectilePosition = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
 
                     GameObject projectile = Instantiate(projectilePrefab, projectilePosition, Quaternion.identity);
                     projectile.GetComponent<Rigidbody2D>().velocity = shootingPower * (projectilePosition - transform.position);
+                    projectile.GetComponent<ProjectileController>().isExplosive = true;
+                    projectile.GetComponent<ProjectileController>().SetCreator(gameObject);
+
+                    powerUp = PowerUp.Normal;
 
                     break;
                 }
+
             case PowerUp.Widespray:
                 {
-                    //todo: implement widespray as shit flying like a big crap in space BC
-                    Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
-                    float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x) - shootingAngle;
-                    float distance = 2 * transform.localScale.x;
 
-                    Vector3 projectilePosition = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
+                    for (int i = 0; i < 10; ++i) {
+                        
+                        float deviation = GenerateNormalRandom(0, 0.2f, -MAX_ANGLE, MAX_ANGLE);
+                        Vector3 projectilePosition = transform.position + new Vector3(distance * Mathf.Cos(angle + deviation), distance * Mathf.Sin(angle + deviation), 0);
 
-                    GameObject projectile = Instantiate(projectilePrefab, projectilePosition, Quaternion.identity);
-                    projectile.GetComponent<Rigidbody2D>().velocity = shootingPower * (projectilePosition - transform.position);
+                        GameObject projectile = Instantiate(projectilePrefab, projectilePosition, Quaternion.identity);
+                        projectile.GetComponent<Rigidbody2D>().velocity = shootingPower * (projectilePosition - transform.position);
+                        projectile.GetComponent<ProjectileController>().SetCreator(gameObject);
+                    }
+
+                    powerUp = PowerUp.Normal;
 
                     break;
                 }
@@ -226,5 +263,30 @@ public class PlayerBehaviour : MonoBehaviour
     {
         run.DisableTurning();
         myTurn = false;
+    }
+
+        public static float GenerateNormalRandom(float mean, float sigma, float min, float max)
+    {
+        float rand1 = Random.Range(0.0f, 1.0f);
+        float rand2 = Random.Range(0.0f, 1.0f);
+
+        float n = Mathf.Sqrt(-2.0f * Mathf.Log(rand1)) * Mathf.Cos((2.0f * Mathf.PI) * rand2);
+
+        float generatedNumber = mean + sigma * n;
+
+        generatedNumber = Mathf.Clamp(generatedNumber, min, max);
+
+        return generatedNumber;
+    }
+
+    public void hit() {
+        hp -= 1;
+        if (hp <= 0) {
+            gameObject.SetActive(false);
+        }
+    }
+
+    public void setRandomPowerUp() {
+        powerUp = (PowerUp) Random.Range(0, 2) + 1;
     }
 }

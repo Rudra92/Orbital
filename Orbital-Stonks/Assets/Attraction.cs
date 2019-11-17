@@ -9,23 +9,25 @@ public class Attraction : MonoBehaviour
     public float gravity;
     public float radiusScale;
 
+    public Sprite[] planetSprites;
+
     void Start()
     {
-        
+        gameObject.GetComponent<SpriteRenderer>().sprite = planetSprites[Random.Range(0, planetSprites.Length - 1)];
     }
 
     // Update is called once per frame
     void Update()
     {
         Vector2 pos2d = new Vector2(transform.position.x, transform.position.y);
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(pos2d, transform.localScale.x * radiusScale);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(pos2d, GetComponent<CircleCollider2D>().bounds.size.x / 2 * radiusScale);
         int i = 0;
         Rigidbody2D rb;
 
         Vector3 force;
         while (i < hitColliders.Length)
         {
-            if (hitColliders[i].gameObject.tag == "Player")
+            if (hitColliders[i].gameObject.tag == "Player" || hitColliders[i].gameObject.tag == "PowerUp")
             {
                 i++;
                 continue;
@@ -38,9 +40,9 @@ public class Attraction : MonoBehaviour
             }
             force = transform.position - hitColliders[i].transform.position;
             float dist = force.magnitude;
-            if(dist != 0) {
+            if (dist != 0) {
                 Vector3 gravityDirection = force.normalized;
-                Vector3 gravityVector = transform.localScale.x * transform.localScale.x * (gravityDirection * gravity) / (dist * dist);
+                Vector3 gravityVector = GetComponent<CircleCollider2D>().bounds.size.x / 2 * GetComponent<CircleCollider2D>().bounds.size.x / 2 * (gravityDirection * gravity) / (dist * dist);
 
                 rb.AddForce(gravityVector, ForceMode2D.Force);
                 hitColliders[i].transform.right = rb.velocity.normalized;

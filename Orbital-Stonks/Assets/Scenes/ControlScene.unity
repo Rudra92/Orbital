@@ -363,8 +363,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bc100f4d1de9d34aba4c2fab4e4b309, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: 20
-  radiusScale: 5
+  gravity: 100
+  radiusScale: 50
 --- !u!58 &944009728
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -496,8 +496,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bc100f4d1de9d34aba4c2fab4e4b309, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: 20
-  radiusScale: 5
+  gravity: 100
+  radiusScale: 50
 --- !u!58 &1612789960
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -791,8 +791,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bc100f4d1de9d34aba4c2fab4e4b309, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: 20
-  radiusScale: 5
+  gravity: 100
+  radiusScale: 50
 --- !u!58 &1932515374
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1003,8 +1003,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bc100f4d1de9d34aba4c2fab4e4b309, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: 20
-  radiusScale: 5
+  gravity: 100
+  radiusScale: 50
 --- !u!58 &2041472035
 CircleCollider2D:
   m_ObjectHideFlags: 0

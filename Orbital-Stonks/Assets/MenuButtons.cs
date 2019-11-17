@@ -51,8 +51,4 @@ public class MenuButtons : MonoBehaviour
     {
         return nbPlayers;
     }
-
-   
-
-    
  }
