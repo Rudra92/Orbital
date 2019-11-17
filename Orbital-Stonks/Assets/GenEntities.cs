@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class GenEntities : MonoBehaviour
 {
     static int nbOfPlanets = 6;
-    static int nbOfPlayers = 3;
+    private int nbOfPlayers;
     private GameObject[] planets = new GameObject[nbOfPlanets];
     private List<GameObject> players = new List<GameObject>();
     Transform t;
@@ -15,9 +15,17 @@ public class GenEntities : MonoBehaviour
     private GameObject gameController;
     private Run controllerScript;
 
+    public float width;
+    public float height;
+    private float scalar;
+
+    public Slider slider;
+
     // Start is called before the first frame update
     void Start()
     {
+        scalar = 3;
+        nbOfPlayers = (int)slider.value;
 
         CreatePlanetWithRandomParams();
         CreatePlayers();
@@ -29,15 +37,15 @@ public class GenEntities : MonoBehaviour
     }
     void CreatePlayers()
     {
-        if (nbOfPlayers < nbOfPlanets)
-        {
-            for (int i = 0; i < nbOfPlayers; i++)
+        float min = nbOfPlanets > nbOfPlayers ? nbOfPlayers : nbOfPlanets;
+    
+            for (int i = 0; i < min; i++)
             {
                 players.Add(Instantiate(prefabPlayer as GameObject));
                 players[i].transform.position = planets[i].transform.position + (planets[i].transform.localScale / 2);
             }
         }
-    }
+    
     void CreatePlanetWithRandomParams()
     {
 
@@ -49,7 +57,7 @@ public class GenEntities : MonoBehaviour
             planets[k] = Instantiate(prefabPlanet) as GameObject;
         }
 
-        planets[0].transform.position = new Vector2(Random.Range(-10.0f, 10.0f), Random.Range(-5.0f, 5.0f));
+        planets[0].transform.position = new Vector2(Random.Range(-width, width), Random.Range(-height, height));
 
 
         for (int j = 1; j < nbOfPlanets; j++)
@@ -58,14 +66,14 @@ public class GenEntities : MonoBehaviour
             while (true)
             {
                 isCorrect = true;
-                planets[j].transform.position = new Vector2(Random.Range(-10.0f, 10.0f), Random.Range(-5.0f, 5.0f));
+                planets[j].transform.position = new Vector2(Random.Range(-width, width), Random.Range(-height, height));
                 float radius = Random.Range(2.0f, 4.0f);
                 planets[j].transform.localScale = new Vector3(radius, radius, 1);
                 for (int k = 0; k < j; k++)
                 {
                     diff = planets[j].transform.position - planets[k].transform.position;
                     float ert = diff.magnitude;
-                    float radiiSum = 2 * ((planets[j].transform.localScale.x / 2) + planets[k].transform.localScale.x / 2);
+                    float radiiSum = scalar * ((planets[j].transform.localScale.x / 2) + planets[k].transform.localScale.x / 2);
                     if (ert < radiiSum) { isCorrect = false; break; }
                 }
                 if (isCorrect) break;

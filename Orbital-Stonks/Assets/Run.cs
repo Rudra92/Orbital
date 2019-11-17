@@ -33,7 +33,7 @@ public class Run : MonoBehaviour
     void Update()
     {
         print(currPlayerIndex);
-
+        
         // pass on to the next player while the next player is inactive
         while (!currPlayer.activeSelf)
         {
