@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Run : MonoBehaviour
 {
@@ -15,8 +16,12 @@ public class Run : MonoBehaviour
     private PlayerBehaviour pb;
     private bool turnRunning;
 
+    public Canvas WinningCanvas;
+    private bool end;
+
     void Start()
     {
+        end = false;
         players = GameObject.FindGameObjectsWithTag("Player");
         currPlayerIndex = 0;
         currPlayer = players[currPlayerIndex];
@@ -32,8 +37,21 @@ public class Run : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (end)
+        {
+            return;
+        }
+
         print(currPlayerIndex);
-        
+        int count = 0;
+        foreach(GameObject p in players)
+        {
+            if(!p.activeSelf)
+            {
+                count++;
+            }
+        }
+
         // pass on to the next player while the next player is inactive
         while (!currPlayer.activeSelf)
         {
@@ -42,7 +60,16 @@ public class Run : MonoBehaviour
             print(currPlayerIndex);
 
         }
-        if (!turnRunning)
+
+        if (count == players.Length - 1)
+        {
+            print("end");
+            end = true;
+            WinningCanvas.GetComponentInChildren<Text>().text = "Player " + (currPlayerIndex + 1) + " wins !";
+            WinningCanvas.gameObject.SetActive(true);
+        }
+
+        if (!turnRunning) 
         {
             pb = currPlayer.GetComponent<PlayerBehaviour>();
             pb.StartTurn();
