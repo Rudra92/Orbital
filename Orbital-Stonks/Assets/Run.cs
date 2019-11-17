@@ -47,11 +47,18 @@ public class Run : MonoBehaviour
             pb = currPlayer.GetComponent<PlayerBehaviour>();
             pb.StartTurn();
             turnRunning = true;
+            SpriteRenderer[] sprites = currPlayer.gameObject.GetComponentsInChildren<SpriteRenderer>();
+            foreach(SpriteRenderer sp in sprites)
+            {
+                sp.enabled = true;
+            }
         } else
         {
             pb = currPlayer.GetComponent<PlayerBehaviour>();
             if(!pb.IsTurn())
             {
+                SpriteRenderer[] sprites = currPlayer.gameObject.GetComponentsInChildren<SpriteRenderer>();
+                sprites[1].enabled = false;
                 currPlayerIndex = (currPlayerIndex + 1) % players.Length;
                 currPlayer = players[currPlayerIndex];
                 turnRunning = false;
