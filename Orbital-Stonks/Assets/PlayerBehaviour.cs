@@ -22,6 +22,8 @@ public class PlayerBehaviour : MonoBehaviour
     public GameObject aimCirclePrefab;
     public GameObject projectilePrefab;
     private GameObject aimCircle;
+    private PowerUp powerUp;
+
     enum PowerUp
     {
         Normal = 0,
@@ -39,6 +41,7 @@ public class PlayerBehaviour : MonoBehaviour
         this.currentPlanet = null;
         this.firing = false;
         shootingAngle = 0f;
+        powerUp = PowerUp.Normal;
     }
 
     // Update is called once per frame
@@ -136,12 +139,12 @@ public class PlayerBehaviour : MonoBehaviour
         aimCircle.transform.position = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
     }
 
-    private void Shoot(PowerUp pw)
+    private void Shoot()
     {
         firing = false;
         GameObject.Destroy(aimCircle);
 
-        switch(pw)
+        switch(powerUp)
         {
             case PowerUp.Jump:
             case PowerUp.Normal:
@@ -192,6 +195,4 @@ public class PlayerBehaviour : MonoBehaviour
 
 
     }
-
-    } 
 }
