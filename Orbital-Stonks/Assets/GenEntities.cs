@@ -9,7 +9,6 @@ public class GenEntities : MonoBehaviour
     private GameObject[] planets;
     private List<GameObject> players = new List<GameObject>();
     Transform t;
-    
     public GameObject prefabPlanet;
     public GameObject prefabPlayer;
     public GameObject prefabPowerUp;
@@ -90,8 +89,7 @@ public class GenEntities : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        int rand = Random.Range(1,500);
+        int rand = Random.Range(1,300);
         if (rand<2){
             Vector2 newPosition = new Vector2(Random.Range(-width,width),Random.Range(-height,height));
             bool isCorrect=true;
