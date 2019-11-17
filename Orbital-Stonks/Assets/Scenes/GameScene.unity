@@ -585,6 +585,7 @@ MonoBehaviour:
   width: 20
   height: 10
   slider: {fileID: 1772764306}
+  planetSlider: {fileID: 1771200495}
 --- !u!1001 &1771200494
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -757,8 +758,45 @@ PrefabInstance:
       propertyPath: m_Value
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 6914044090573029212, guid: 2c8b6752eedaf634384aacbc0a525dae,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6901086721276016073, guid: 2c8b6752eedaf634384aacbc0a525dae,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8155303889516815716, guid: 2c8b6752eedaf634384aacbc0a525dae,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7792475291083296177, guid: 2c8b6752eedaf634384aacbc0a525dae,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8690173009148229776, guid: 2c8b6752eedaf634384aacbc0a525dae,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2c8b6752eedaf634384aacbc0a525dae, type: 3}
+--- !u!114 &1771200495 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1713695109802687844, guid: 2c8b6752eedaf634384aacbc0a525dae,
+    type: 3}
+  m_PrefabInstance: {fileID: 1771200494}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -113659843, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1772764306 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7023745135537472940, guid: 2c8b6752eedaf634384aacbc0a525dae,
