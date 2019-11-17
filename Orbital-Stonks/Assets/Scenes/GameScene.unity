@@ -838,6 +838,8 @@ MonoBehaviour:
     type: 3}
   prefabPlayer: {fileID: 7488235406093054980, guid: d7413671c96e96645a0bcc5954184b01,
     type: 3}
+  prefabPowerUp: {fileID: 6960194888006170694, guid: 2e9d87728471a5742b66dbed6ac8cfd8,
+    type: 3}
   width: 20
   height: 10
   slider: {fileID: 1772764306}
@@ -1019,12 +1021,7 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6901086721276016073, guid: 2c8b6752eedaf634384aacbc0a525dae,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8155303889516815716, guid: 2c8b6752eedaf634384aacbc0a525dae,
+    - target: {fileID: 8690173009148229776, guid: 2c8b6752eedaf634384aacbc0a525dae,
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1034,7 +1031,12 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8690173009148229776, guid: 2c8b6752eedaf634384aacbc0a525dae,
+    - target: {fileID: 6901086721276016073, guid: 2c8b6752eedaf634384aacbc0a525dae,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8155303889516815716, guid: 2c8b6752eedaf634384aacbc0a525dae,
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
