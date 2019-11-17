@@ -41,4 +41,9 @@ public class MenuButtons : MonoBehaviour
     {
         playerNumber.text = slider.value.ToString();
     }
-}
+
+    public int GetPlayersNum()
+    {
+        return (int)slider.value;
+    }
+ }
