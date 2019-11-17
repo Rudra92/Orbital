@@ -22,6 +22,13 @@ public class PlayerBehaviour : MonoBehaviour
     public GameObject aimCirclePrefab;
     public GameObject projectilePrefab;
     private GameObject aimCircle;
+    enum PowerUp
+    {
+        Normal = 0,
+        Jump = 1,
+        Explode = 2,
+        Widespray = 3
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -129,18 +136,62 @@ public class PlayerBehaviour : MonoBehaviour
         aimCircle.transform.position = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
     }
 
-    private void Shoot()
+    private void Shoot(PowerUp pw)
     {
         firing = false;
         GameObject.Destroy(aimCircle);
 
-        Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
-        float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x) - shootingAngle;
-        float distance = 2 * transform.localScale.x;
+        switch(pw)
+        {
+            case PowerUp.Jump:
+            case PowerUp.Normal:
+                { 
+                Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
+                float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x) - shootingAngle;
+                float distance = 2 * transform.localScale.x;
 
-        Vector3 projectilePosition = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
+                Vector3 projectilePosition = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
 
-        GameObject projectile = Instantiate(projectilePrefab, projectilePosition, Quaternion.identity);
-        projectile.GetComponent<Rigidbody2D>().velocity = shootingPower * (projectilePosition - transform.position);
+                GameObject projectile = Instantiate(projectilePrefab, projectilePosition, Quaternion.identity);
+                projectile.GetComponent<Rigidbody2D>().velocity = shootingPower * (projectilePosition - transform.position);
+                break;
+                }
+
+            case PowerUp.Explode:
+                {
+                    //todo: Implement exploding arrow
+                    Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
+                    float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x) - shootingAngle;
+                    float distance = 2 * transform.localScale.x;
+
+                    Vector3 projectilePosition = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
+
+                    GameObject projectile = Instantiate(projectilePrefab, projectilePosition, Quaternion.identity);
+                    projectile.GetComponent<Rigidbody2D>().velocity = shootingPower * (projectilePosition - transform.position);
+
+                    break;
+                }
+            case PowerUp.Widespray:
+                {
+                    //todo: implement widespray as shit flying like a big crap in space BC
+                    Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
+                    float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x) - shootingAngle;
+                    float distance = 2 * transform.localScale.x;
+
+                    Vector3 projectilePosition = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
+
+                    GameObject projectile = Instantiate(projectilePrefab, projectilePosition, Quaternion.identity);
+                    projectile.GetComponent<Rigidbody2D>().velocity = shootingPower * (projectilePosition - transform.position);
+
+                    break;
+                }
+
+            default: break;
+        }
+
+
+
     }
+
+    } 
 }
