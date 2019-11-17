@@ -25,16 +25,10 @@ public class GenEntities : MonoBehaviour
     {
         if (nbOfPlayers < nbOfPlanets)
         {
-            int nextPlanet = 0;
             for (int i = 0; i < nbOfPlayers; i++)
             {
                 players.Add(Instantiate(prefabPlayer as GameObject));
-                int currPlanet = Random.Range(0, nbOfPlanets - 1);
-                players[i].transform.position = planets[currPlanet].transform.position + (planets[currPlanet].transform.localScale/2)+transform.localScale;
-                while (currPlanet == nextPlanet) nextPlanet = Random.Range(0, nbOfPlanets);
-
-
-
+                players[i].transform.position = planets[i].transform.position + (planets[i].transform.localScale / 2);
             }
         }
     }

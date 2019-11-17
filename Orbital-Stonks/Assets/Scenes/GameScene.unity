@@ -204,7 +204,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1577159559}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e7f36f2057882049837e5cabb03e320, type: 3}
+  m_Script: {fileID: 11500000, guid: 6de67bac3acd0c742ac529d96ed53484, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   prefabPlanet: {fileID: 3711011104891457078, guid: 90ac294f3ba26914bbe6f7e73e6beed8,
