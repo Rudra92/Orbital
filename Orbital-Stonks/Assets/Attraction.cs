@@ -18,7 +18,7 @@ public class Attraction : MonoBehaviour
     void Update()
     {
         Vector2 pos2d = new Vector2(transform.position.x, transform.position.y);
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(pos2d, transform.localScale.x * radiusScale);
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(pos2d, GetComponent<CircleCollider2D>().bounds.size.x / 2 * radiusScale);
         int i = 0;
         Rigidbody2D rb;
 
@@ -40,7 +40,8 @@ public class Attraction : MonoBehaviour
             float dist = force.magnitude;
             if (dist != 0) {
                 Vector3 gravityDirection = force.normalized;
-                Vector3 gravityVector = transform.localScale.x * transform.localScale.x * (gravityDirection * gravity) / (dist * dist);
+                Vector3 gravityVector = 0.8f * GetComponent<CircleCollider2D>().bounds.size.x / 2 * GetComponent<CircleCollider2D>().bounds.size.x / 2 * (gravityDirection * gravity) / (dist * dist);
+                Debug.Log("gravityVector: " + gravityVector);
 
                 rb.AddForce(gravityVector, ForceMode2D.Force);
                 hitColliders[i].transform.right = rb.velocity.normalized;

@@ -42,7 +42,7 @@ public class PlayerBehaviour : MonoBehaviour
         this.currentPlanet = null;
         this.firing = false;
         shootingAngle = 0f;
-        powerUp = PowerUp.Normal;
+        powerUp = PowerUp.Jump;
     }
 
     // Update is called once per frame
@@ -63,19 +63,24 @@ public class PlayerBehaviour : MonoBehaviour
             }
         } else
         {
+            if (firing && Input.GetKeyDown("space")) {
+                Shoot();
+                return;
+            }
             
             Vector3 planetPosition = currentPlanet.transform.position;
             Vector3 planetToPlayer = transform.position - planetPosition;
             if (powerUp == PowerUp.Jump && Input.GetKeyDown("space")) {
                 Vector3 jumpVector = 10 * planetToPlayer.normalized;
                 rb2d.velocity += new Vector2(jumpVector.x, jumpVector.y);
-                transform.position += 0.05f * new Vector3(rb2d.velocity.x, rb2d.velocity.y, 0);
+                transform.position += 0.1f * new Vector3(rb2d.velocity.x, rb2d.velocity.y, 0);
                 currentPlanet = null;
                 powerUp = PowerUp.Normal;
             } else {
                 float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x);
-                float horiInput = firing ? 0 : 0.1f * Input.GetAxis("Horizontal") / currentPlanet.transform.localScale.x;
-                float distance = currentPlanet.transform.localScale.x / 2 + transform.localScale.y / 2;
+                float horiInput = firing ? 0 : 0.1f * Input.GetAxis("Horizontal") / currentPlanet.GetComponent<CircleCollider2D>().bounds.size.x / 2;
+                float distance = currentPlanet.GetComponent<CircleCollider2D>().bounds.size.x / 2 + bc2d.bounds.size.y / 2;
+                Debug.Log("noot:" + distance);
 
                 transform.position = planetPosition + new Vector3(distance * Mathf.Cos(angle - horiInput), distance * Mathf.Sin(angle - horiInput), transform.position.z);
                 rb2d.velocity *= 0.9f;
@@ -83,10 +88,6 @@ public class PlayerBehaviour : MonoBehaviour
 
             if (firing)
             {
-                if (Input.GetKeyDown("space"))
-                {
-                    Shoot();
-                }
                 PrepareShooting();
             }
             else
@@ -95,9 +96,6 @@ public class PlayerBehaviour : MonoBehaviour
                 {
                     SetupShoot();
                     PrepareShooting();
-                }
-                else
-                {
                 }
             }
 
@@ -120,7 +118,7 @@ public class PlayerBehaviour : MonoBehaviour
             Vector3 playerToPlanet = planetPosition - transform.position;
             float distance = playerToPlanet.magnitude + 1e-10f;
 
-            float gravityPower = planet.GetComponent<Attraction>().gravity * Mathf.Pow(planet.transform.localScale.x, 2) / Mathf.Pow(distance, 2);
+            float gravityPower = planet.GetComponent<Attraction>().gravity * Mathf.Pow(planet.GetComponent<CircleCollider2D>().bounds.size.x / 2, 2) / Mathf.Pow(distance, 2);
             rb2d.AddForce(gravityPower * playerToPlanet.normalized);
         }
     }
@@ -143,7 +141,7 @@ public class PlayerBehaviour : MonoBehaviour
 
         Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
         float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x) - shootingAngle;
-        float distance = 1.2f * transform.localScale.x * shootingPower;
+        float distance = 1.1f * bc2d.bounds.size.y / 2 * shootingPower;
 
         aimCircle.transform.position = transform.position + new Vector3(distance * Mathf.Cos(angle), distance * Mathf.Sin(angle), 0);
 
@@ -178,7 +176,7 @@ public class PlayerBehaviour : MonoBehaviour
 
         Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
         float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x) - shootingAngle;
-        float distance = 2 * transform.localScale.x;
+        float distance = bc2d.bounds.size.y + projectilePrefab.GetComponent<Collider2D>().bounds.size.y + 1;
 
         switch(powerUp)
         {
