@@ -24,6 +24,8 @@ public class PlayerBehaviour : MonoBehaviour
     private GameObject aimCircle;
     private PowerUp powerUp;
     private bool myTurn;
+    private GameObject gc;
+    private Run run;
 
     enum PowerUp
     {
@@ -44,7 +46,12 @@ public class PlayerBehaviour : MonoBehaviour
         this.myTurn = false;
         shootingAngle = 0f;
         powerUp = PowerUp.Normal;
+        gc = GameObject.FindGameObjectWithTag("GameController");
+        run = gc.GetComponent<Run>();
+
     }
+
+
 
     // Update is called once per frame
     void Update()
@@ -87,7 +94,6 @@ public class PlayerBehaviour : MonoBehaviour
                 }
                 else
                 {
-                    if (myTurn) print("Running");
                     Vector3 planetPosition = currentPlanet.transform.position;
                     Vector3 planetToPlayer = transform.position - planetPosition;
 
@@ -131,7 +137,6 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void PrepareShooting()
     {
-        print(aimCircle.transform.position);
         shootingAngle += 0.1f * Input.GetAxis("Horizontal");
         shootingAngle = Mathf.Clamp(shootingAngle, -Mathf.PI / 2, Mathf.PI / 2);
 
@@ -214,5 +219,12 @@ public class PlayerBehaviour : MonoBehaviour
     public bool IsTurn()
     {
         return myTurn;
+    }
+
+
+    private void OnDisable()
+    {
+        run.DisableTurning();
+        myTurn = false;
     }
 }

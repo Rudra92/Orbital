@@ -19,7 +19,7 @@ public class Run : MonoBehaviour
     {
         players = GameObject.FindGameObjectsWithTag("Player");
         currPlayerIndex = 0;
-        currPlayer = players[0];
+        currPlayer = players[currPlayerIndex];
         turnRunning = false;
         activePlayers = players.Length;
         foreach (GameObject p in players)
@@ -32,7 +32,17 @@ public class Run : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!turnRunning)
+        print(currPlayerIndex);
+
+        // pass on to the next player while the next player is inactive
+        while (!currPlayer.activeSelf)
+        {
+            currPlayerIndex = (currPlayerIndex + 1) % players.Length;
+            currPlayer = players[currPlayerIndex];
+            print(currPlayerIndex);
+
+        }
+        if (!turnRunning)
         {
             pb = currPlayer.GetComponent<PlayerBehaviour>();
             pb.StartTurn();
@@ -42,13 +52,10 @@ public class Run : MonoBehaviour
             pb = currPlayer.GetComponent<PlayerBehaviour>();
             if(!pb.IsTurn())
             {
+                currPlayerIndex = (currPlayerIndex + 1) % players.Length;
+                currPlayer = players[currPlayerIndex];
                 turnRunning = false;
-                // pass on to the next player while the next player is inactive
-                do
-                {
-                    currPlayerIndex = (currPlayerIndex + 1) % players.Length;
-                    currPlayer = players[currPlayerIndex];
-                } while (!currPlayer.activeInHierarchy);
+                
             }
         }
 
@@ -59,7 +66,11 @@ public class Run : MonoBehaviour
     {
         pb = player.GetComponent<PlayerBehaviour>();
         pb.StartTurn();
+    }
 
+    public void DisableTurning()
+    {
+        turnRunning = false;
     }
 
 }

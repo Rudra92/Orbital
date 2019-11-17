@@ -12,6 +12,8 @@ public class GenEntities : MonoBehaviour
     
     public GameObject prefabPlanet;
     public GameObject prefabPlayer;
+    private GameObject gameController;
+    private Run controllerScript;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +21,10 @@ public class GenEntities : MonoBehaviour
 
         CreatePlanetWithRandomParams();
         CreatePlayers();
+        gameController = GameObject.FindGameObjectWithTag("GameController");
+        controllerScript = gameController.GetComponent<Run>();
+        controllerScript.enabled = true;
+
 
     }
     void CreatePlayers()
