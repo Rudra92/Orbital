@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 public class GenEntities : MonoBehaviour
 {
-    static int nbOfPlanets = 6;
+    static int nbOfPlanets;
     private int nbOfPlayers;
-    private GameObject[] planets = new GameObject[nbOfPlanets];
+    private GameObject[] planets;
     private List<GameObject> players = new List<GameObject>();
     Transform t;
     
@@ -20,12 +20,15 @@ public class GenEntities : MonoBehaviour
     private float scalar;
 
     public Slider slider;
+    public Slider planetSlider;
 
     // Start is called before the first frame update
     void Start()
     {
         scalar = 3;
         nbOfPlayers = (int)slider.value;
+        nbOfPlanets = (int)planetSlider.value;
+        planets = new GameObject[nbOfPlanets];
 
         CreatePlanetWithRandomParams();
         CreatePlayers();
