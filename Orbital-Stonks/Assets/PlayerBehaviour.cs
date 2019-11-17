@@ -24,6 +24,13 @@ public class PlayerBehaviour : MonoBehaviour
     public GameObject projectilePrefab;
     private GameObject aimCircle;
     private PowerUp powerUp;
+    private bool myTurn;
+    private GameObject gc;
+    private Run run;
+
+    private GameObject spriteHolder;
+
+    public Sprite[] powerUpSprites;
 
     enum PowerUp
     {
@@ -41,13 +48,24 @@ public class PlayerBehaviour : MonoBehaviour
         this.planets = GameObject.FindGameObjectsWithTag(PLANET_TAG);
         this.currentPlanet = null;
         this.firing = false;
+        this.myTurn = false;
         shootingAngle = 0f;
         powerUp = PowerUp.Jump;
+        gc = GameObject.FindGameObjectWithTag("GameController");
+        run = gc.GetComponent<Run>();
+        this.spriteHolder = GameObject.FindGameObjectWithTag("PowerUpHolder");
     }
+
+
 
     // Update is called once per frame
     void Update()
     {
+        if (rb2d.velocity.magnitude <= MINIMAL_VELOCITY)
+        {
+            rb2d.velocity = new Vector2(0, 0);
+        }
+
         if (currentPlanet == null)
         {
             // let it gravitate into a planet
@@ -63,46 +81,42 @@ public class PlayerBehaviour : MonoBehaviour
             }
         } else
         {
-            if (firing && Input.GetKeyDown("space")) {
-                Shoot();
-                return;
-            }
             
             Vector3 planetPosition = currentPlanet.transform.position;
             Vector3 planetToPlayer = transform.position - planetPosition;
-            if (powerUp == PowerUp.Jump && Input.GetKeyDown("space")) {
-                Vector3 jumpVector = 10 * planetToPlayer.normalized;
+            float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x);
+            float horiInput = firing || !myTurn ? 0 : 0.1f * Input.GetAxis("Horizontal") / currentPlanet.GetComponent<CircleCollider2D>().bounds.size.x / 2;
+            float distance = currentPlanet.GetComponent<CircleCollider2D>().bounds.size.x / 2 + bc2d.bounds.size.y / 2;
+
+            transform.position = planetPosition + new Vector3(distance * Mathf.Cos(angle - horiInput), distance * Mathf.Sin(angle - horiInput), transform.position.z);
+            rb2d.velocity *= 0.9f;
+        }
+        
+        if (myTurn && currentPlanet != null) {
+
+            if (firing && Input.GetKeyDown("space")) {
+                Shoot();
+            } else if (powerUp == PowerUp.Jump && Input.GetKeyDown("space")) {
+                Vector3 planetPosition = currentPlanet.transform.position;
+                Vector3 planetToPlayer = transform.position - planetPosition;
+                Vector3 jumpVector = 15 * planetToPlayer.normalized;
                 rb2d.velocity += new Vector2(jumpVector.x, jumpVector.y);
                 transform.position += 0.1f * new Vector3(rb2d.velocity.x, rb2d.velocity.y, 0);
                 currentPlanet = null;
                 powerUp = PowerUp.Normal;
-            } else {
-                float angle = Mathf.Atan2(planetToPlayer.y, planetToPlayer.x);
-                float horiInput = firing ? 0 : 0.1f * Input.GetAxis("Horizontal") / currentPlanet.GetComponent<CircleCollider2D>().bounds.size.x / 2;
-                float distance = currentPlanet.GetComponent<CircleCollider2D>().bounds.size.x / 2 + bc2d.bounds.size.y / 2;
-                Debug.Log("noot:" + distance);
-
-                transform.position = planetPosition + new Vector3(distance * Mathf.Cos(angle - horiInput), distance * Mathf.Sin(angle - horiInput), transform.position.z);
-                rb2d.velocity *= 0.9f;
-            }
-
-            if (firing)
+            } else if (firing)
             {
                 PrepareShooting();
             }
-            else
+            else if (Input.GetKeyDown("f") && myTurn)
             {
-                if (Input.GetKeyDown("f"))
-                {
-                    SetupShoot();
-                    PrepareShooting();
-                }
+                SetupShoot();
+                PrepareShooting();
             }
+        }
 
-            if (rb2d.velocity.magnitude <= MINIMAL_VELOCITY)
-            {
-                rb2d.velocity = new Vector2(0, 0);
-            }
+        if (myTurn) {
+            spriteHolder.GetComponent<SpriteRenderer>().sprite = powerUpSprites[(int) powerUp];
         }
     }
 
@@ -133,7 +147,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void PrepareShooting()
     {
-        shootingAngle += 0.1f * Input.GetAxis("Horizontal");
+        shootingAngle += 0.01f * Input.GetAxis("Horizontal");
         shootingAngle = Mathf.Clamp(shootingAngle, -MAX_ANGLE, MAX_ANGLE);
 
         shootingPower += 0.1f * Input.GetAxis("Vertical");
@@ -172,6 +186,7 @@ public class PlayerBehaviour : MonoBehaviour
     private void Shoot()
     {
         firing = false;
+        myTurn = false;
         GameObject.Destroy(aimCircle);
 
         Vector3 planetToPlayer = (transform.position - currentPlanet.transform.position).normalized;
@@ -187,6 +202,7 @@ public class PlayerBehaviour : MonoBehaviour
 
                 GameObject projectile = Instantiate(projectilePrefab, projectilePosition, Quaternion.identity);
                 projectile.GetComponent<Rigidbody2D>().velocity = shootingPower * (projectilePosition - transform.position);
+                projectile.GetComponent<ProjectileController>().SetCreator(gameObject);
                 break;
                 }
 
@@ -197,6 +213,7 @@ public class PlayerBehaviour : MonoBehaviour
                     GameObject projectile = Instantiate(projectilePrefab, projectilePosition, Quaternion.identity);
                     projectile.GetComponent<Rigidbody2D>().velocity = shootingPower * (projectilePosition - transform.position);
                     projectile.GetComponent<ProjectileController>().isExplosive = true;
+                    projectile.GetComponent<ProjectileController>().SetCreator(gameObject);
 
                     powerUp = PowerUp.Normal;
 
@@ -213,6 +230,7 @@ public class PlayerBehaviour : MonoBehaviour
 
                         GameObject projectile = Instantiate(projectilePrefab, projectilePosition, Quaternion.identity);
                         projectile.GetComponent<Rigidbody2D>().velocity = shootingPower * (projectilePosition - transform.position);
+                        projectile.GetComponent<ProjectileController>().SetCreator(gameObject);
                     }
 
                     powerUp = PowerUp.Normal;
@@ -223,8 +241,28 @@ public class PlayerBehaviour : MonoBehaviour
             default: break;
         }
 
+   
+    }
+    public void StartTurn()
+    {
+        myTurn = true;
+    }
+
+    void EndTurn()
+    {
+        myTurn = false;
+    }
+
+    public bool IsTurn()
+    {
+        return myTurn;
+    }
 
 
+    private void OnDisable()
+    {
+        run.DisableTurning();
+        myTurn = false;
     }
 
         public static float GenerateNormalRandom(float mean, float sigma, float min, float max)
@@ -244,7 +282,11 @@ public class PlayerBehaviour : MonoBehaviour
     public void hit() {
         hp -= 1;
         if (hp <= 0) {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
+    }
+
+    public void setRandomPowerUp() {
+        powerUp = (PowerUp) Random.Range(0, 2) + 1;
     }
 }
