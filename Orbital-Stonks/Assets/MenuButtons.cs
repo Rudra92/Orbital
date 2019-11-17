@@ -6,22 +6,26 @@ using UnityEngine.UI;
 public class MenuButtons : MonoBehaviour
 {
     public GameObject MainPanel;
-    public GameObject SettingsPanel;
     public Slider slider;
+    public Slider planetSlider;
     public Text playerNumber;
+    public Text planetNumber;
 
     private int nbPlayers;
+    private int nbPlanets;
 
     // Start is called before the first frame update
     void Start()
     {
         playerNumber.text = "2";
-        MainPanel.SetActive(true);
-        SettingsPanel.SetActive(false);
+        planetNumber.text = "2";
         slider.onValueChanged.AddListener(delegate {
-            print(slider.value);
             nbPlayers = (int)slider.value;
             setPlayerNumber(); });
+        planetSlider.onValueChanged.AddListener(delegate {
+            nbPlanets = (int)planetSlider.value;
+            setPlanetNumber();
+        });
     }
 
     // Update is called once per frame
@@ -30,25 +34,23 @@ public class MenuButtons : MonoBehaviour
         
     }
 
-    public void ShowMainMenu()
-    {
-        MainPanel.SetActive(true);
-        SettingsPanel.SetActive(false);
-    }
-
-    public void ShowSettings()
-    {
-        MainPanel.SetActive(false);
-        SettingsPanel.SetActive(true);
-    }
-
     public void setPlayerNumber()
     {
         playerNumber.text = slider.value.ToString();
     }
 
+    public void setPlanetNumber()
+    {
+        planetNumber.text = planetSlider.value.ToString();
+    }
+
     public int GetPlayersNum()
     {
         return nbPlayers;
+    }
+
+    public int GetPlanetNum()
+    {
+        return nbPlanets;
     }
  }
