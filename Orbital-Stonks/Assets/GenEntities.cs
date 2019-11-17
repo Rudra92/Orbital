@@ -12,6 +12,7 @@ public class GenEntities : MonoBehaviour
     
     public GameObject prefabPlanet;
     public GameObject prefabPlayer;
+    public GameObject prefabPowerUp;
     private GameObject gameController;
     private Run controllerScript;
 
@@ -86,7 +87,27 @@ public class GenEntities : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+        int rand = Random.Range(1,500);
+        if (rand<2){
+            Vector2 newPosition = new Vector2(Random.Range(-width,width),Random.Range(-height,height));
+            bool isCorrect=true;
+            foreach(GameObject element in planets){
+                Vector2 diff = newPosition - (Vector2) element.transform.position;
+                float ert = diff.magnitude;
+                float radiiSum = scalar * ((prefabPowerUp.GetComponent<CircleCollider2D>().bounds.size.x / 2) + element.GetComponent<CircleCollider2D>().bounds.size.x / 2);
+                if (ert<radiiSum) {
+                    isCorrect=false;
+                    break;
+                }
 
+            }
+
+            if(isCorrect) {
+                Instantiate(prefabPowerUp, newPosition, Quaternion.identity);
+            }
+        }
+                
     }
 }
 
