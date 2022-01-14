@@ -38,10 +38,12 @@ public class Run : MonoBehaviour
     {
         if (end)
         {
+
+            WinningCanvas.GetComponentInChildren<Text>().text = "Player " + (currPlayerIndex + 1) + " wins !";
+            WinningCanvas.gameObject.SetActive(true);
             return;
         }
 
-        print(currPlayerIndex);
         int count = 0;
         foreach(GameObject p in players)
         {
@@ -64,8 +66,6 @@ public class Run : MonoBehaviour
         {
             print("end");
             end = true;
-            WinningCanvas.GetComponentInChildren<Text>().text = "Player " + (currPlayerIndex + 1) + " wins !";
-            WinningCanvas.gameObject.SetActive(true);
         }
 
         if (!turnRunning) 

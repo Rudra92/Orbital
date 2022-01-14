@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 public class GenEntities : MonoBehaviour
 {
@@ -118,6 +119,18 @@ public class GenEntities : MonoBehaviour
                 
     }
 
+
+    public void exitGame()
+    {
+        print("Pressed button");
+        Application.Quit();
+    }
+
+    public void restart()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
+    }
 }
 
 

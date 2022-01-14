@@ -92,10 +92,7 @@ public class PlayerBehaviour : MonoBehaviour
             rb2d.velocity *= 0.9f;
         }
 
-        print(myTurn +" " + currentPlanet);
-
         if (myTurn && currentPlanet != null) {
-            print("Pressed space");
 
             if (firing && Input.GetKeyDown("space")) {
                 Shoot();
