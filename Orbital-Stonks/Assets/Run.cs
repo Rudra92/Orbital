@@ -30,7 +30,6 @@ public class Run : MonoBehaviour
         foreach (GameObject p in players)
         {
             pb = p.GetComponent<PlayerBehaviour>();
-            print(pb.transform.position);
         }
     }
 

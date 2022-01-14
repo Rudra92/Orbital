@@ -9,7 +9,7 @@ public class ProjectileController : MonoBehaviour
     public float explosionRange;
     public GameObject explosionPrefab;
     public float lifeTime;
-    private float remainingLifeTime;
+    private float remainingLifeTime ;
     public bool isExplosive = false;
     private GameObject creator;
     // Start is called before the first frame update

@@ -6,8 +6,8 @@ public class Attraction : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    public float gravity;
-    public float radiusScale;
+    public float gravity = 150;
+    public float radiusScale = 20;
 
     public Sprite[] planetSprites;
 
@@ -44,8 +44,8 @@ public class Attraction : MonoBehaviour
                 Vector3 gravityDirection = force.normalized;
                 Vector3 gravityVector = GetComponent<CircleCollider2D>().bounds.size.x / 2 * GetComponent<CircleCollider2D>().bounds.size.x / 2 * (gravityDirection * gravity) / (dist * dist);
 
-                rb.AddForce(gravityVector, ForceMode2D.Force);
-                hitColliders[i].transform.right = rb.velocity.normalized;
+                rb.AddForce(gravityVector, ForceMode2D.Force );
+                hitColliders[i].transform.right = rb.velocity.normalized * Time.deltaTime;
             }
             i++;
         }

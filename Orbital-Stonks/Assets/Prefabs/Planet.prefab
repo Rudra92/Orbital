@@ -48,6 +48,8 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -59,6 +61,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -131,8 +134,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bc100f4d1de9d34aba4c2fab4e4b309, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: 200
-  radiusScale: 50
+  gravity: 100
+  radiusScale: 45
   planetSprites:
   - {fileID: 21300000, guid: 8ff5851d96e353540b1e6d34f6dafe7b, type: 3}
   - {fileID: 21300000, guid: 1eebe61fa30929248bdcda4d7c3c51ec, type: 3}

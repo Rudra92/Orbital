@@ -22,6 +22,8 @@ public class GenEntities : MonoBehaviour
     public Slider slider;
     public Slider planetSlider;
 
+    public int max_powerups = 10;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -52,7 +54,7 @@ public class GenEntities : MonoBehaviour
     void CreatePlanetWithRandomParams()
     {
 
-
+        int max_iter = 1000;
         Vector2 diff = new Vector2(0, 0);
 
         for (int k = 0; k < nbOfPlanets; k++)
@@ -66,11 +68,13 @@ public class GenEntities : MonoBehaviour
         for (int j = 1; j < nbOfPlanets; j++)
         {
             bool isCorrect = true;
-            while (true)
+            int i = 0;
+            while (i < max_iter)
             {
+                i += 1;
                 isCorrect = true;
                 planets[j].transform.position = new Vector2(Random.Range(-width, width), Random.Range(-height, height));
-                float radius = Random.Range(2.0f, 4.0f);
+                float radius = Random.Range(3.0f, 4.0f);
                 planets[j].transform.localScale = new Vector3(radius, radius, 1);
                 for (int k = 0; k < j; k++)
                 {
@@ -89,15 +93,17 @@ public class GenEntities : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        int rand = Random.Range(1,300);
-        if (rand<2){
+        int rand = Random.Range(1,500);
+
+        int curr_powerups = GameObject.FindGameObjectsWithTag("PowerUp").Length;
+        if (rand<2 && curr_powerups < max_powerups){
             Vector2 newPosition = new Vector2(Random.Range(-width,width),Random.Range(-height,height));
             bool isCorrect=true;
             foreach(GameObject element in planets){
                 Vector2 diff = newPosition - (Vector2) element.transform.position;
                 float ert = diff.magnitude;
                 float radiiSum = scalar * ((prefabPowerUp.GetComponent<CircleCollider2D>().bounds.size.x / 2) + element.GetComponent<CircleCollider2D>().bounds.size.x / 2);
-                if (ert<radiiSum) {
+                if (ert<radiiSum + 5) {
                     isCorrect=false;
                     break;
                 }
@@ -106,11 +112,15 @@ public class GenEntities : MonoBehaviour
 
             if(isCorrect) {
                 Instantiate(prefabPowerUp, newPosition, Quaternion.identity);
+                
             }
         }
                 
     }
+
 }
+
+
 
 
 

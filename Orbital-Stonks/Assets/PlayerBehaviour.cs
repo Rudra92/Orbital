@@ -6,9 +6,9 @@ public class PlayerBehaviour : MonoBehaviour
 {
     private const string PLANET_TAG = "Planet";
     private const float MINIMAL_VELOCITY = 0.01f;
-    private const float INITIAL_SHOOTING_POWER = 5;
-    private const float MINIMAL_SHOOTING_POWER = 2;
-    private const float MAXIMAL_SHOOTING_POWER = 10;
+    private const float INITIAL_SHOOTING_POWER = 8;
+    private const float MINIMAL_SHOOTING_POWER = 5;
+    private const float MAXIMAL_SHOOTING_POWER = 15;
     private const float MAX_ANGLE = Mathf.PI / 2;
 
     public int hp;
@@ -91,8 +91,11 @@ public class PlayerBehaviour : MonoBehaviour
             transform.position = planetPosition + new Vector3(distance * Mathf.Cos(angle - horiInput), distance * Mathf.Sin(angle - horiInput), transform.position.z);
             rb2d.velocity *= 0.9f;
         }
-        
+
+        print(myTurn +" " + currentPlanet);
+
         if (myTurn && currentPlanet != null) {
+            print("Pressed space");
 
             if (firing && Input.GetKeyDown("space")) {
                 Shoot();
@@ -101,7 +104,7 @@ public class PlayerBehaviour : MonoBehaviour
                 Vector3 planetToPlayer = transform.position - planetPosition;
                 Vector3 jumpVector = 15 * planetToPlayer.normalized;
                 rb2d.velocity += new Vector2(jumpVector.x, jumpVector.y);
-                transform.position += 0.1f * new Vector3(rb2d.velocity.x, rb2d.velocity.y, 0);
+                transform.position += 0.1f * new Vector3(rb2d.velocity.x * Time.deltaTime, rb2d.velocity.y * Time.deltaTime, 0);
                 currentPlanet = null;
                 powerUp = PowerUp.Normal;
             } else if (firing)
@@ -133,7 +136,7 @@ public class PlayerBehaviour : MonoBehaviour
             float distance = playerToPlanet.magnitude + 1e-10f;
 
             float gravityPower = planet.GetComponent<Attraction>().gravity * Mathf.Pow(planet.GetComponent<CircleCollider2D>().bounds.size.x / 2, 2) / Mathf.Pow(distance, 2);
-            rb2d.AddForce(gravityPower * playerToPlanet.normalized);
+            rb2d.AddForce(gravityPower * playerToPlanet.normalized * Time.deltaTime);
         }
     }
 
